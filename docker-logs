@@ -1,11 +1,11 @@
 #!/bin/bash
 echo $#
 if [ $# -eq 1 ];then
-  container=$(docker-compose ps | grep $1 | awk {'print $1'} | head -1)
+  container=$(docker ps | awk {'print $NF'} | grep $1 | awk {'print $1'} | head -1)
   echo $container
   docker logs -f $container
 elif [ $# -eq 2 ];then
-  container=$(docker-compose ps | grep $1 | awk {'print $1'} | head -1)
+  container=$(docker ps | awk {'print $NF'} | grep $1 | awk {'print $1'} | head -1)
   echo $container
   docker logs -f $container --tail $2
 fi

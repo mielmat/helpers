@@ -1,0 +1,37 @@
+#!/bin/bash
+SUFFIX="**/src/test/**"
+
+echo "Aggregate test informations"
+
+function getAllTests() {
+  grep -RP "@Test( |$)" -A1 $PATH_TO_PROJECT$SUFFIX > /tmp/tempFile
+  numberOfTests=$(cat /tmp/tempFile |grep @Test | wc -l)
+}
+
+function getUnitTests() {
+  numberOfUnitTests=$(cat /tmp/tempFile | grep -v @Test | grep Test.java | wc -l)
+}
+
+
+function getIntegrationTests() {
+  firstCase=$(cat /tmp/tempFile | grep -v @Test | grep TestIT.java | wc -l)
+  secondCase=$(cat /tmp/tempFile | grep -v @Test | grep IntegrationTest.java | wc -l)
+  numberOfIntTests=$((firstCase + secondCase))
+  
+}
+
+function getCucumberTests() {
+  numberOfCucumberScenarios=$(grep -RPh "Scenario: " $PATH_TO_PROJECT$SUFFIX | wc -l)
+}
+
+PATH_TO_PROJECT=$1
+echo $PATH_TO_PROJECT
+getAllTests
+echo "Number of all tests: $numberOfTests"
+getUnitTests
+echo "Number of Unit tests: $numberOfUnitTests"
+getIntegrationTests
+echo "Number of Integration tests: $numberOfIntTests"
+getCucumberTests
+echo "Number of Cucumber tests: $numberOfCucumberScenarios"
+rm /tmp/tempFile
